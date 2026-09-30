@@ -1,0 +1,31 @@
+services:
+  pxe:
+    build:
+      context: .
+      args:
+        IVENTOY_VERSION: ${IVENTOY_VERSION:-1.0.42}
+
+    container_name: pxe-server
+    hostname: pxe-server
+
+    restart: unless-stopped
+
+    privileged: true
+
+    network_mode: host
+
+
+    volumes:
+      - ${ISO_DIR}:/iventoy/iso
+
+
+networks:
+  pxe_lan:
+    driver: ipvlan
+    driver_opts:
+      parent: ${PARENT_INTERFACE}
+      ipvlan_mode: l2
+    ipam:
+      config:
+        - subnet: ${LAN_SUBNET}
+          gateway: ${LAN_GATEWAY}
